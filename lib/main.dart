@@ -10,9 +10,12 @@ import 'package:instagram/utils/colors.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
+  // Ensures that the widget binding is initialized before any Firebase initialization
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase
   await Firebase.initializeApp(
-    options: FirebaseOptions(
+    options: const FirebaseOptions(
       apiKey: "AIzaSyCboPcIlgrtgkNNQb-Gh2CLdHgveywH44U",
       appId: "1:169385935313:web:4f8a8ab52f8e37fbc5a0f0",
       messagingSenderId: "169385935313",
@@ -20,6 +23,7 @@ void main() async {
       storageBucket: "instagram-25c64.appspot.com",
     ),
   );
+
   runApp(MyApp());
 }
 
@@ -27,14 +31,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => UserProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Instagram',
-        theme: ThemeData.dark()
-            .copyWith(scaffoldBackgroundColor: mobileBackgroundColor),
+        theme: ThemeData.dark().copyWith(
+          scaffoldBackgroundColor: mobileBackgroundColor,
+        ),
         home: StreamBuilder(
-          stream: FirebaseAuth.instance.authStateChanges(), // Corrected stream
+          stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.active) {
               if (snapshot.hasData) {
@@ -48,6 +55,7 @@ class MyApp extends StatelessWidget {
                 );
               }
             }
+
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(
@@ -55,6 +63,7 @@ class MyApp extends StatelessWidget {
                 ),
               );
             }
+
             return LoginScreen();
           },
         ),
